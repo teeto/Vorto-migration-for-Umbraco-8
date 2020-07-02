@@ -135,16 +135,28 @@ namespace iCreativos.Utils.HealthChecks
                                 }
                                 if (fix)
                                 {
-                                    foreach (var valorIdioma in valor.Values)
+                                    if (!valor.Values.Any())
                                     {
-                                        try
+                                        //Its empty
+                                        foreach (var culture in content.AvailableCultures)
                                         {
-                                            content.SetValue(propertyAlias, valorIdioma.Value, culture: valorIdioma.Key);
+                                            content.SetValue(propertyAlias, "", culture);
                                         }
-                                        catch (Exception ex)
+                                        
+                                    }
+                                    else
+                                    {
+                                        foreach (var valorIdioma in valor.Values)
                                         {
-                                            var ex2 = new Exception("Error saving the content " + content.Id + ", property: " + propertyAlias + ". " + ex.Message, ex);
-                                            throw ex2;
+                                            try
+                                            {
+                                                content.SetValue(propertyAlias, valorIdioma.Value, culture: valorIdioma.Key);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                var ex2 = new Exception("Error saving content " + content.Id + ", property: " + propertyAlias + ". " + ex.Message, ex);
+                                                throw ex2;
+                                            }
                                         }
                                     }
                                 }
