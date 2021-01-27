@@ -108,14 +108,15 @@ namespace iCreativos.Utils.HealthChecks
                 var stringValue = property.GetValue().TryConvertTo<string>();
                 if(string.IsNullOrWhiteSpace(stringValue.Result) && property.Values.Any())
                 {
-                    stringValue = property.Values.First().PublishedValue.TryConvertTo<string>();
+                    //stringValue = property.Values.First().PublishedValue.TryConvertTo<string>();
+                    stringValue = property.Values.First().EditedValue.TryConvertTo<string>();
                 }
 
                 if (stringValue.Success)
                 {
                     if (!string.IsNullOrWhiteSpace(stringValue.Result))
                     {
-                        if (stringValue.Result.DetectIsJson())
+                        if (stringValue.Result.DetectIsJson() && stringValue.Result.ToLower().Contains("dtdGuid".ToLower()))
                         {
                             var valor = JsonConvert.DeserializeObject<VortoValue>(stringValue.Result);
                             if (valor == null)
@@ -135,17 +136,7 @@ namespace iCreativos.Utils.HealthChecks
                                 }
                                 if (fix)
                                 {
-                                    if (!valor.Values.Any())
-                                    {
-                                        //Its empty
-                                        foreach (var culture in content.AvailableCultures)
-                                        {
-                                            content.SetValue(propertyAlias, "", culture);
-                                        }
-                                        
-                                    }
-                                    else
-                                    {
+                                    
                                         foreach (var valorIdioma in valor.Values)
                                         {
                                             try
@@ -158,7 +149,7 @@ namespace iCreativos.Utils.HealthChecks
                                                 throw ex2;
                                             }
                                         }
-                                    }
+                                    
                                 }
                             }
                         }
